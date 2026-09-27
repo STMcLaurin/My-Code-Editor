@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Editor · Live Preview</title>
+
+    <!-- CodeMirror 5 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <div id="app">
+        <!-- ─── Toolbar ─── -->
+        <header class="toolbar">
+            <div class="logo">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+                <span>Code Studio</span>
+            </div>
+            <div class="btn-group">
+                <button class="primary" id="runBtn" title="Run (Ctrl+Enter)">▶ Run</button>
+                <button id="clearBtn" class="danger" title="Clear all code">✕ Clear</button>
+            </div>
+            <div class="sep"></div>
+            <div class="btn-group">
+                <button class="size-btn active" data-size="desktop" title="Desktop">🖥</button>
+                <button class="size-btn" data-size="tablet" title="Tablet">📱</button>
+                <button class="size-btn" data-size="mobile" title="Mobile">📲</button>
+            </div>
+            <div class="sep"></div>
+            <div class="btn-group">
+                <button id="downloadHtmlBtn" title="Download as HTML">⬇ HTML</button>
+                <button id="downloadZipBtn" class="success" title="Download project as ZIP">📦 ZIP</button>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-group">
+                <button id="toggleConsoleBtn" title="Toggle console">⎚ Console</button>
+            </div>
+        </header>
+
+        <!-- ─── Main ─── -->
+        <div class="main" id="mainContainer">
+            <!-- Editor -->
+            <div class="editor-panel" id="editorPanel">
+                <div class="editor-tabs" id="editorTabs">
+                    <button class="tab active" data-mode="html">HTML <span class="badge">.html</span></button>
+                    <button class="tab" data-mode="css">CSS <span class="badge">.css</span></button>
+                    <button class="tab" data-mode="js">JS <span class="badge">.js</span></button>
+                </div>
+                <div class="editor-wrapper" id="editorWrapper">
+                    <textarea id="codeEditor"></textarea>
+                </div>
+            </div>
+
+            <!-- Resize handle -->
+            <div class="resize-handle" id="resizeHandle"></div>
+
+            <!-- Preview -->
+            <div class="preview-panel" id="previewPanel">
+                <div class="preview-header">
+                    <span class="label">Live Preview</span>
+                    <span class="status" id="previewStatus">● ready</span>
+                </div>
+                <div class="preview-container size-desktop" id="previewContainer">
+                    <iframe id="previewFrame" sandbox="allow-scripts allow-modals"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Console ─── -->
+        <div class="console-panel" id="consolePanel">
+            <div class="console-header" id="consoleHeader">
+                <span class="label">⎚ Console</span>
+                <div class="actions">
+                    <button id="clearConsoleBtn">Clear</button>
+                </div>
+            </div>
+            <div class="console-output" id="consoleOutput">
+                <div class="empty">⏎ Console output will appear here …</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Toast container ─── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/xml-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
